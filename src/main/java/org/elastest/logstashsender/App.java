@@ -45,14 +45,8 @@ public class App {
 			containerName = "dummy_3717";
 		}
 		
-
-		String message = String.join(" ", generateRandomWords(3));
-		
-		
 		String body;
-		
 //		body= sendMessageDynamically(tjobexecid, containerName);
-		
 		body = sendMultipleLog(tjobexecid, containerName);
 		
 		byte[] out = body.getBytes(StandardCharsets.UTF_8);
