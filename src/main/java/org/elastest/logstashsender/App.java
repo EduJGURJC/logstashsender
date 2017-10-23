@@ -37,7 +37,7 @@ public class App {
 
 		String tjobexecid = System.getenv("TJOBEXEC_ID");
 		if (tjobexecid == null) {
-			tjobexecid = "5";
+			tjobexecid = "16";
 		}
 		
 		String containerName = System.getenv("CONTAINER_NAME");
@@ -46,6 +46,30 @@ public class App {
 		}
 		
 
+		String message = String.join(" ", generateRandomWords(3));
+		
+		
+		String body;
+		
+//		body= sendMessageDynamically(tjobexecid, containerName);
+		
+		body = sendMultipleLog(tjobexecid, containerName);
+		
+		byte[] out = body.getBytes(StandardCharsets.UTF_8);
+
+		int length = out.length;
+
+		http.setFixedLengthStreamingMode(length);
+		http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		http.connect();
+		try (OutputStream os = http.getOutputStream()) {
+			os.write(out);
+		}
+	    Thread.sleep(2000);
+
+	}
+	
+	public static String sendMessageDynamically(String tjobexecid, String containerName){
 		String message = String.join(" ", generateRandomWords(3));
 		
 		String body = "{"
@@ -60,19 +84,28 @@ public class App {
 //					+ ",\"custom_2\":\"" + containerName + "\""
 //				+ "}"
 				+ "}";
+		return body;
+	}
+	
+	public static String sendMultipleLog(String tjobexecid, String containerName){
+		String message = String.join(" ", generateRandomWords(3));
+		String jsonMessage = "[ " + formatJsonMessage(message) + ",";
+		message = String.join(" ", generateRandomWords(3));
+		jsonMessage += formatJsonMessage(message) + " ]";
 		
-		byte[] out = body.getBytes(StandardCharsets.UTF_8);
-
-		int length = out.length;
-
-		http.setFixedLengthStreamingMode(length);
-		http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-		http.connect();
-		try (OutputStream os = http.getOutputStream()) {
-			os.write(out);
-		}
-	    Thread.sleep(2000);
-
+		String body = "{"
+				+ "\"component_type\":\"test\""
+				+ ",\"tjobexec\":\"" + tjobexecid + "\""
+				+ ",\"info_id\":\"default_log\""
+				+ ",\"trace_type\":\"log\""
+				+ ",\"multiple_message\":" + jsonMessage
+				+ ",\"container_name\":\"" + containerName + "\""
+				+ "}";
+		return body;
+	}
+	
+	public static String formatJsonMessage(String msg){
+		return "\"" + msg + "\"";
 	}
 
 	public static String[] generateRandomWords(int numberOfWords) {
