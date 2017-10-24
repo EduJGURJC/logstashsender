@@ -37,7 +37,7 @@ public class App {
 
 		String tjobexecid = System.getenv("TJOBEXEC_ID");
 		if (tjobexecid == null) {
-			tjobexecid = "16";
+			tjobexecid = "40";
 		}
 		
 		String containerName = System.getenv("CONTAINER_NAME");
@@ -46,9 +46,12 @@ public class App {
 		}
 		
 		String body;
-//		body= sendMessageDynamically(tjobexecid, containerName);
+		body= sendMessageDynamically(tjobexecid, containerName);
 		body = sendMultipleLog(tjobexecid, containerName);
+		body = sendComplexMetric(tjobexecid, containerName);
+		body = sendSingleMetric(tjobexecid, containerName);
 		
+
 		byte[] out = body.getBytes(StandardCharsets.UTF_8);
 
 		int length = out.length;
@@ -84,6 +87,7 @@ public class App {
 	public static String sendMultipleLog(String tjobexecid, String containerName){
 		String message = String.join(" ", generateRandomWords(3));
 		String jsonMessage = "[ " + formatJsonMessage(message) + ",";
+		
 		message = String.join(" ", generateRandomWords(3));
 		jsonMessage += formatJsonMessage(message) + " ]";
 		
@@ -93,6 +97,50 @@ public class App {
 				+ ",\"info_id\":\"default_log\""
 				+ ",\"trace_type\":\"log\""
 				+ ",\"multiple_message\":" + jsonMessage
+				+ ",\"container_name\":\"" + containerName + "\""
+				+ "}";
+		return body;
+	}
+	
+	public static String sendSingleMetric(String tjobexecid, String containerName){
+		int value = randInt(0, 100);
+		
+		String body = "{"
+				+ "\"type\":\"single_metric_example\""
+				+ ",\"component_type\":\"test\""
+				+ ",\"tjobexec\":\"" + tjobexecid + "\""
+				+ ",\"info_id\":\"custom_metric\""
+				+ ",\"trace_type\":\"single_metric\""
+				+ ",\"single_metric_example\":\"" + value + "\""
+				+ ",\"unit\":\"percent\""
+				+ ",\"container_name\":\"" + containerName + "\""
+				+ "}";
+		return body;
+	}
+	
+	
+	public static String sendComplexMetric(String tjobexecid, String containerName){
+		int value = randInt(0, 100);
+		int value2 = randInt(0, 2000);
+		
+		String trace = "{"
+				+ "\"metric1\": " + value + ","
+				+ "\"metric2\": " + value2 + ""
+				+"}";
+		
+		String units = "{"
+				+ "\"metric1\":\"percent\","
+				+ "\"metric2\":\"bytes\""
+				+"}";
+		
+		String body = "{"
+				+ "\"type\":\"metric_example\""
+				+ ",\"component_type\":\"test\""
+				+ ",\"tjobexec\":\"" + tjobexecid + "\""
+				+ ",\"info_id\":\"custom_metric\""
+				+ ",\"trace_type\":\"metrics\""
+				+ ",\"metric_example\": " + trace
+				+ ",\"units\": " + units
 				+ ",\"container_name\":\"" + containerName + "\""
 				+ "}";
 		return body;
@@ -113,6 +161,13 @@ public class App {
 			randomStrings[i] = new String(word);
 		}
 		return randomStrings;
+	}
+	
+	public static int randInt(int min, int max) {
+	    Random rand = new Random();
+	    int randomNum = rand.nextInt((max - min) + 1) + min;
+
+	    return randomNum;
 	}
 
 }
