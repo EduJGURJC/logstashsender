@@ -37,7 +37,7 @@ public class App {
 
 		String tjobexecid = System.getenv("TJOBEXEC_ID");
 		if (tjobexecid == null) {
-			tjobexecid = "40";
+			tjobexecid = "21";
 		}
 		
 		String containerName = System.getenv("CONTAINER_NAME");
@@ -47,9 +47,9 @@ public class App {
 		
 		String body;
 		body= sendMessageDynamically(tjobexecid, containerName);
-		body = sendMultipleLog(tjobexecid, containerName);
-		body = sendComplexMetric(tjobexecid, containerName);
-		body = sendSingleMetric(tjobexecid, containerName);
+//		body = sendMultipleLog(tjobexecid, containerName);
+//		body = sendComposedMetric(tjobexecid, containerName);
+//		body = sendSingleMetric(tjobexecid, containerName);
 		
 
 		byte[] out = body.getBytes(StandardCharsets.UTF_8);
@@ -70,10 +70,10 @@ public class App {
 		String message = String.join(" ", generateRandomWords(3));
 		
 		String body = "{"
-				+ "\"component_type\":\"dynamic_component_type3\""
+				+ "\"component\":\"dynamic_component3\""
 				+ ",\"tjobexec\":\"" + tjobexecid + "\""
-				+ ",\"info_id\":\"custom_log\""
-				+ ",\"trace_type\":\"log\""
+				+ ",\"stream\":\"custom_log\""
+				+ ",\"stream_type\":\"log\""
 				+ ",\"message\":\"" + message + "\""
 				+ ",\"container_name\":\"" + containerName + "\""
 //				+ ",\"custom_field\":{"
@@ -92,11 +92,11 @@ public class App {
 		jsonMessage += formatJsonMessage(message) + " ]";
 		
 		String body = "{"
-				+ "\"component_type\":\"test\""
+				+ "\"component\":\"test\""
 				+ ",\"tjobexec\":\"" + tjobexecid + "\""
-				+ ",\"info_id\":\"default_log\""
-				+ ",\"trace_type\":\"log\""
-				+ ",\"multiple_message\":" + jsonMessage
+				+ ",\"stream\":\"default_log\""
+				+ ",\"stream_type\":\"log\""
+				+ ",\"messages\":" + jsonMessage
 				+ ",\"container_name\":\"" + containerName + "\""
 				+ "}";
 		return body;
@@ -107,10 +107,10 @@ public class App {
 		
 		String body = "{"
 				+ "\"type\":\"single_metric_example\""
-				+ ",\"component_type\":\"test\""
+				+ ",\"component\":\"test\""
 				+ ",\"tjobexec\":\"" + tjobexecid + "\""
-				+ ",\"info_id\":\"custom_metric\""
-				+ ",\"trace_type\":\"single_metric\""
+				+ ",\"stream\":\"custom_metric\""
+				+ ",\"stream_type\":\"atomic_metric\""
 				+ ",\"single_metric_example\":\"" + value + "\""
 				+ ",\"unit\":\"percent\""
 				+ ",\"container_name\":\"" + containerName + "\""
@@ -119,7 +119,7 @@ public class App {
 	}
 	
 	
-	public static String sendComplexMetric(String tjobexecid, String containerName){
+	public static String sendComposedMetric(String tjobexecid, String containerName){
 		int value = randInt(0, 100);
 		int value2 = randInt(0, 2000);
 		
@@ -135,10 +135,10 @@ public class App {
 		
 		String body = "{"
 				+ "\"type\":\"metric_example\""
-				+ ",\"component_type\":\"test\""
+				+ ",\"component\":\"test\""
 				+ ",\"tjobexec\":\"" + tjobexecid + "\""
-				+ ",\"info_id\":\"custom_metric\""
-				+ ",\"trace_type\":\"metrics\""
+				+ ",\"stream\":\"custom_metric\""
+				+ ",\"stream_type\":\"composed_metrics\""
 				+ ",\"metric_example\": " + trace
 				+ ",\"units\": " + units
 				+ ",\"container_name\":\"" + containerName + "\""
