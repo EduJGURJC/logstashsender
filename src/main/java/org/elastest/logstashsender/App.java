@@ -23,7 +23,7 @@ public class App {
 
 	// HTTP POST request
 	private static void sendPost() throws Exception {
-		String logstash = System.getenv("LS_API");
+		String logstash = System.getenv("ET_MON_LSHTTP_API");
 		if (logstash == null) {
 			logstash = "http://" + "localhost" + ":5003";
 		}
