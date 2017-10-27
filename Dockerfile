@@ -1,5 +1,3 @@
 FROM elastest/test-etm-alpinegitjava
 
-COPY logstashsender.jar /logstashsender.jar
-
-CMD cd /; exec java -jar logstashsender.jar
+CMD git clone https://github.com/EduJGURJC/logstashsender; cd logstashsender; mvn clean package -DskipTests; cd target; exec java -jar $(ls | grep ".*\.jar$");
