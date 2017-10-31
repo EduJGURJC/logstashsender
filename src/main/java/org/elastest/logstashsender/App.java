@@ -48,20 +48,25 @@ public class App {
             containerName = "dummy_3717";
         }
 
+        String component = System.getenv("COMPONENT");
+        if (component == null) {
+            component = "dynamic_component3";
+        }
+
         String body;
         switch (type) {
         case "singlelog":
-            body = sendSingleMessage(execid, containerName);
+            body = sendSingleMessage(execid, containerName, component);
             break;
 
         case "multiplelog":
-            body = sendMultipleLog(execid, containerName);
+            body = sendMultipleLog(execid, containerName, component);
             break;
         case "atomicmetric":
-            body = sendSingleMetric(execid, containerName);
+            body = sendSingleMetric(execid, containerName, component);
             break;
         case "composedmetric":
-            body = sendComposedMetric(execid, containerName);
+            body = sendComposedMetric(execid, containerName, component);
             break;
 
         default:
@@ -83,11 +88,11 @@ public class App {
 
     }
 
-    public static String sendSingleMessage(String execid,
-            String containerName) {
+    public static String sendSingleMessage(String execid, String containerName,
+            String component) {
         String message = String.join(" ", generateRandomWords(3));
 
-        String body = "{" + "\"component\":\"dynamic_component3\""
+        String body = "{" + "\"component\":\"" + component + "\""
                 + ",\"exec\":\"" + execid + "\"" + ",\"stream\":\"custom_log\""
                 + ",\"stream_type\":\"log\"" + ",\"message\":\"" + message
                 + "\"" + ",\"container_name\":\"" + containerName + "\""
@@ -99,26 +104,28 @@ public class App {
         return body;
     }
 
-    public static String sendMultipleLog(String execid, String containerName) {
+    public static String sendMultipleLog(String execid, String containerName,
+            String component) {
         String message = String.join(" ", generateRandomWords(3));
         String jsonMessage = "[ " + formatJsonMessage(message) + ",";
 
         message = String.join(" ", generateRandomWords(3));
         jsonMessage += formatJsonMessage(message) + " ]";
 
-        String body = "{" + "\"component\":\"test\"" + ",\"exec\":\"" + execid
-                + "\"" + ",\"stream\":\"default_log\""
+        String body = "{" + "\"component\":\"" + component + "\""
+                + ",\"exec\":\"" + execid + "\"" + ",\"stream\":\"default_log\""
                 + ",\"stream_type\":\"log\"" + ",\"messages\":" + jsonMessage
                 + ",\"container_name\":\"" + containerName + "\"" + "}";
         return body;
     }
 
-    public static String sendSingleMetric(String execid, String containerName) {
+    public static String sendSingleMetric(String execid, String containerName,
+            String component) {
         int value = randInt(0, 100);
 
         String body = "{" + "\"type\":\"single_metric_example\""
-                + ",\"component\":\"test\"" + ",\"exec\":\"" + execid + "\""
-                + ",\"stream\":\"custom_metric\""
+                + ",\"component\":\"" + component + "\"" + ",\"exec\":\""
+                + execid + "\"" + ",\"stream\":\"custom_metric\""
                 + ",\"stream_type\":\"atomic_metric\""
                 + ",\"single_metric_example\":\"" + value + "\""
                 + ",\"unit\":\"percent\"" + ",\"container_name\":\""
@@ -126,8 +133,8 @@ public class App {
         return body;
     }
 
-    public static String sendComposedMetric(String execid,
-            String containerName) {
+    public static String sendComposedMetric(String execid, String containerName,
+            String component) {
         int value = randInt(0, 100);
         int value2 = randInt(0, 2000);
 
@@ -137,8 +144,8 @@ public class App {
         String units = "{" + "\"metric1\":\"percent\","
                 + "\"metric2\":\"bytes\"" + "}";
 
-        String body = "{" + "\"type\":\"metric_example\""
-                + ",\"component\":\"test\"" + ",\"exec\":\"" + execid + "\""
+        String body = "{" + "\"type\":\"metric_example\"" + ",\"component\":\""
+                + component + "\"" + ",\"exec\":\"" + execid + "\""
                 + ",\"stream\":\"custom_metric\""
                 + ",\"stream_type\":\"composed_metrics\""
                 + ",\"metric_example\": " + trace + ",\"units\": " + units
