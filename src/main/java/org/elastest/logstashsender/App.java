@@ -94,8 +94,8 @@ public class App {
 
         String body = "{" + "\"component\":\"" + component + "\""
                 + ",\"exec\":\"" + execid + "\"" + ",\"stream\":\"custom_log\""
-                + ",\"stream_type\":\"log\"" + ",\"message\":\"" + message
-                + "\"" + ",\"container_name\":\"" + containerName + "\""
+                + ",\"message\":\"" + message + "\"" + ",\"container_name\":\""
+                + containerName + "\""
                 // + ",\"custom_field\":{"
                 // + "\"custom_1\":\"log\""
                 // + ",\"custom_2\":\"" + containerName + "\""
@@ -114,8 +114,8 @@ public class App {
 
         String body = "{" + "\"component\":\"" + component + "\""
                 + ",\"exec\":\"" + execid + "\"" + ",\"stream\":\"default_log\""
-                + ",\"stream_type\":\"log\"" + ",\"messages\":" + jsonMessage
-                + ",\"container_name\":\"" + containerName + "\"" + "}";
+                + ",\"messages\":" + jsonMessage + ",\"container_name\":\""
+                + containerName + "\"" + "}";
         return body;
     }
 
