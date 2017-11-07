@@ -30,7 +30,6 @@ public class App {
         if (logstash == null) {
             logstash = "http://" + "localhost" + ":5003";
         }
-        System.out.println("LOGSTASH: " + logstash);
         URL url = new URL(logstash);
 
         URLConnection con = url.openConnection();
@@ -50,23 +49,27 @@ public class App {
 
         String component = System.getenv("COMPONENT");
         if (component == null) {
-            component = "dynamic_component3";
+            component = "new_component";
         }
 
         String body;
         switch (type) {
         case "singlelog":
             body = sendSingleMessage(execid, containerName, component);
+            System.out.println("Single log. LOGSTASH: " + logstash);
             break;
 
         case "multiplelog":
             body = sendMultipleLog(execid, containerName, component);
+            System.out.println("Multiple log. LOGSTASH: " + logstash);
             break;
         case "atomicmetric":
-            body = sendSingleMetric(execid, containerName, component);
+            body = sendAtomicMetric(execid, containerName, component);
+            System.out.println("Atomic Metric. LOGSTASH: " + logstash);
             break;
         case "composedmetric":
             body = sendComposedMetric(execid, containerName, component);
+            System.out.println("Composed Metric. LOGSTASH: " + logstash);
             break;
 
         default:
@@ -119,15 +122,15 @@ public class App {
         return body;
     }
 
-    public static String sendSingleMetric(String execid, String containerName,
+    public static String sendAtomicMetric(String execid, String containerName,
             String component) {
         int value = randInt(0, 100);
 
-        String body = "{" + "\"type\":\"single_metric_example\""
+        String body = "{" + "\"type\":\"atomic_example\""
                 + ",\"component\":\"" + component + "\"" + ",\"exec\":\""
                 + execid + "\"" + ",\"stream\":\"custom_metric\""
                 + ",\"stream_type\":\"atomic_metric\""
-                + ",\"single_metric_example\":\"" + value + "\""
+                + ",\"atomic_example\":\"" + value + "\""
                 + ",\"unit\":\"percent\"" + ",\"container_name\":\""
                 + containerName + "\"" + "}";
         return body;
@@ -144,11 +147,11 @@ public class App {
         String units = "{" + "\"metric1\":\"percent\","
                 + "\"metric2\":\"bytes\"" + "}";
 
-        String body = "{" + "\"type\":\"metric_example\"" + ",\"component\":\""
+        String body = "{" + "\"type\":\"composed_example\"" + ",\"component\":\""
                 + component + "\"" + ",\"exec\":\"" + execid + "\""
                 + ",\"stream\":\"custom_metric\""
                 + ",\"stream_type\":\"composed_metrics\""
-                + ",\"metric_example\": " + trace + ",\"units\": " + units
+                + ",\"composed_example\": " + trace + ",\"units\": " + units
                 + ",\"container_name\":\"" + containerName + "\"" + "}";
         return body;
     }
