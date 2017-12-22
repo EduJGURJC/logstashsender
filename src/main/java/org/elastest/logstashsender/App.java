@@ -9,8 +9,12 @@ import java.util.Random;
 
 public class App {
     public static void main(String[] args) {
-        int counter = 100000;
+        String counterStr = System.getenv("COUNTER");
+        int counter = Integer.parseInt(counterStr);
 
+        if (counterStr == null) {
+            counter = 15;
+        }
         while (counter > 0) {
             try {
                 sendPost("singlelog");
@@ -39,7 +43,7 @@ public class App {
 
         String execid = System.getenv("ET_MON_EXEC");
         if (execid == null) {
-            execid = "3717";
+            execid = "111";
         }
 
         String containerName = System.getenv("CONTAINER_NAME");
@@ -126,9 +130,9 @@ public class App {
             String component) {
         int value = randInt(0, 100);
 
-        String body = "{" + "\"type\":\"atomic_example\""
-                + ",\"component\":\"" + component + "\"" + ",\"exec\":\""
-                + execid + "\"" + ",\"stream\":\"custom_metric\""
+        String body = "{" + "\"type\":\"atomic_example\"" + ",\"component\":\""
+                + component + "\"" + ",\"exec\":\"" + execid + "\""
+                + ",\"stream\":\"custom_metric\""
                 + ",\"stream_type\":\"atomic_metric\""
                 + ",\"atomic_example\":\"" + value + "\""
                 + ",\"unit\":\"percent\"" + ",\"container_name\":\""
@@ -147,9 +151,9 @@ public class App {
         String units = "{" + "\"metric1\":\"percent\","
                 + "\"metric2\":\"bytes\"" + "}";
 
-        String body = "{" + "\"type\":\"composed_example\"" + ",\"component\":\""
-                + component + "\"" + ",\"exec\":\"" + execid + "\""
-                + ",\"stream\":\"custom_metric\""
+        String body = "{" + "\"type\":\"composed_example\""
+                + ",\"component\":\"" + component + "\"" + ",\"exec\":\""
+                + execid + "\"" + ",\"stream\":\"custom_metric\""
                 + ",\"stream_type\":\"composed_metrics\""
                 + ",\"composed_example\": " + trace + ",\"units\": " + units
                 + ",\"container_name\":\"" + containerName + "\"" + "}";
