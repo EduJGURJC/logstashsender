@@ -10,10 +10,12 @@ import java.util.Random;
 public class App {
     public static void main(String[] args) {
         String counterStr = System.getenv("COUNTER");
-        int counter = Integer.parseInt(counterStr);
-
+        int counter;
+        
         if (counterStr == null) {
             counter = 15;
+        } else {
+            counter = Integer.parseInt(counterStr);
         }
         while (counter > 0) {
             try {
