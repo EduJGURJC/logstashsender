@@ -11,7 +11,7 @@ public class App {
     public static void main(String[] args) {
         String counterStr = System.getenv("COUNTER");
         int counter;
-        
+
         if (counterStr == null) {
             counter = 15;
         } else {
@@ -34,7 +34,7 @@ public class App {
     private static void sendPost(String type) throws Exception {
         String logstash = System.getenv("ET_MON_LSHTTP_API");
         if (logstash == null) {
-            logstash = "http://" + "localhost" + ":5003";
+            logstash = "http://" + "localhost" + ":5003"; // or /api/monitoring/
         }
         URL url = new URL(logstash);
 
@@ -103,7 +103,7 @@ public class App {
 
         String body = "{" + "\"component\":\"" + component + "\""
                 + ",\"exec\":\"" + execid + "\"" + ",\"stream\":\"custom_log\""
-                + ",\"message\":\"" + message + "\"" + ",\"container_name\":\""
+                + ",\"message\":\"" + message + "\"" + ",\"containerName\":\""
                 + containerName + "\""
                 // + ",\"custom_field\":{"
                 // + "\"custom_1\":\"log\""
@@ -123,7 +123,7 @@ public class App {
 
         String body = "{" + "\"component\":\"" + component + "\""
                 + ",\"exec\":\"" + execid + "\"" + ",\"stream\":\"default_log\""
-                + ",\"messages\":" + jsonMessage + ",\"container_name\":\""
+                + ",\"messages\":" + jsonMessage + ",\"containerName\":\""
                 + containerName + "\"" + "}";
         return body;
     }
@@ -131,14 +131,14 @@ public class App {
     public static String sendAtomicMetric(String execid, String containerName,
             String component) {
         int value = randInt(0, 100);
-
-        String body = "{" + "\"type\":\"atomic_example\"" + ",\"component\":\""
-                + component + "\"" + ",\"exec\":\"" + execid + "\""
-                + ",\"stream\":\"custom_metric\""
-                + ",\"stream_type\":\"atomic_metric\""
-                + ",\"atomic_example\":\"" + value + "\""
-                + ",\"unit\":\"percent\"" + ",\"container_name\":\""
-                + containerName + "\"" + "}";
+        String metricName = "atomic_example";
+        String body = "{" + "\"et_type\":\"" + metricName + "\""
+                + ",\"component\":\"" + component + "\"" + ",\"exec\":\""
+                + execid + "\"" + ",\"stream\":\"custom_metric\""
+                + ",\"stream_type\":\"atomic_metric\"" + ",\"" + metricName
+                + "\":\"" + value + "\"" + ",\"unit\":\"percent\""
+                + ",\"containerName\":\"" + containerName + "\""
+                + ",\"metricName\":\"" + metricName + "\"" + "}";
         return body;
     }
 
@@ -153,12 +153,12 @@ public class App {
         String units = "{" + "\"metric1\":\"percent\","
                 + "\"metric2\":\"bytes\"" + "}";
 
-        String body = "{" + "\"type\":\"composed_example\""
+        String body = "{" + "\"et_type\":\"composed_example\""
                 + ",\"component\":\"" + component + "\"" + ",\"exec\":\""
                 + execid + "\"" + ",\"stream\":\"custom_metric\""
                 + ",\"stream_type\":\"composed_metrics\""
                 + ",\"composed_example\": " + trace + ",\"units\": " + units
-                + ",\"container_name\":\"" + containerName + "\"" + "}";
+                + ",\"containerName\":\"" + containerName + "\"" + "}";
         return body;
     }
 
